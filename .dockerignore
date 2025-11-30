@@ -1,6 +1,8 @@
 *
 !src
 !scripts
+!plugins
+!db
 !package*.json
 !tsconfig.*
 !docker-entrypoint.sh
