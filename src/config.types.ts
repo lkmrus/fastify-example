@@ -9,6 +9,7 @@ interface DbConfig {
   USER: string;
   PASSWORD: string;
   DATABASE: string;
+  SCHEMA: string;
 }
 
 interface AppConfig {

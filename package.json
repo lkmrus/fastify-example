@@ -9,7 +9,12 @@
     "prestart": "npm run build",
     "start:dev": "nodemon src/main.ts",
     "start": "node dist/main.js",
-    "migrate": ""
+    "db:create": "ts-node scripts/create-database.ts",
+    "migrate": "ts-node scripts/migrate.ts",
+    "seed": "ts-node scripts/seed.ts",
+    "migrate:reset": "ts-node scripts/reset-migrations.ts",
+    "db:drop": "ts-node scripts/drop-db.ts",
+    "db:reset": "npm run db:drop && npm run migrate && npm run seed"
   },
   "author": "lkmrus@gmail.com",
   "license": "MIT",
@@ -24,19 +29,25 @@
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-prettier": "^5.5.4",
     "nodemon": "^3.1.11",
+    "pino-pretty": "^11.0.0",
     "prettier": "^3.7.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "@fastify/autoload": "^6.0.2",
     "@fastify/cookie": "^11.0.2",
     "decimal.js": "^10.6.0",
     "fastify": "^5.6.2",
+    "fastify-plugin": "^5.0.1",
     "i": "^0.3.7",
     "ioredis": "^5.8.2",
     "npm": "^11.6.4",
     "pg": "^8.16.3",
+    "postgres": "^3.4.4",
+    "postgres-migrations": "^5.3.0",
     "reflect-metadata": "^0.2.2",
-    "rimraf": "^6.1.2"
+    "rimraf": "^6.1.2",
+    "zod": "^3.23.8"
   }
 }

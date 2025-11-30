@@ -15,5 +15,5 @@
     "esModuleInterop": true,
     "strict": true
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "plugins/**/*", "scripts/**/*"]
 }

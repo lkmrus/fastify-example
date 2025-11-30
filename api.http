@@ -1,0 +1,73 @@
+@baseUrl = http://localhost:3050
+
+### Health check
+GET {{baseUrl}}/health
+
+### Successful purchase - Buy 1 Wireless Mouse (19.99)
+POST {{baseUrl}}/purchases
+Content-Type: application/json
+
+{
+  "user_id": 1,
+  "product_id": 1,
+  "quantity": 1
+}
+
+### Buy Mechanical Keyboard (149.50)
+POST {{baseUrl}}/purchases
+Content-Type: application/json
+
+{
+  "user_id": 1,
+  "product_id": 2,
+  "quantity": 1
+}
+
+### Buy USB-C Cable (5.75 x 5 = 28.75)
+POST {{baseUrl}}/purchases
+Content-Type: application/json
+
+{
+  "user_id": 1,
+  "product_id": 3,
+  "quantity": 5
+}
+
+### Error: Validation - negative quantity
+POST {{baseUrl}}/purchases
+Content-Type: application/json
+
+{
+  "user_id": 1,
+  "product_id": 1,
+  "quantity": -1
+}
+
+### Error: Validation - missing field
+POST {{baseUrl}}/purchases
+Content-Type: application/json
+
+{
+  "user_id": 1,
+  "product_id": 1
+}
+
+### Error: User not found
+POST {{baseUrl}}/purchases
+Content-Type: application/json
+
+{
+  "user_id": 9999,
+  "product_id": 1,
+  "quantity": 1
+}
+
+### Error: Product not found
+POST {{baseUrl}}/purchases
+Content-Type: application/json
+
+{
+  "user_id": 1,
+  "product_id": 9999,
+  "quantity": 1
+}
