@@ -3,9 +3,11 @@ import { getConfig } from './config';
 
 import cachePlugin from '../plugins/cache-plugin';
 import dbPlugin from '../plugins/db';
+import skinportPlugin from '../plugins/skinport-plugin';
 import servicesPlugin from '../plugins/services';
 
 import purchaseRoutes from './routes/purchase.routes';
+import itemsRoutes from './routes/items.routes';
 
 const config = getConfig();
 
@@ -39,8 +41,10 @@ async function startServer() {
   try {
     await server.register(cachePlugin);
     await server.register(dbPlugin);
+    await server.register(skinportPlugin);
     await server.register(servicesPlugin);
     await server.register(purchaseRoutes, { prefix: '/purchases' });
+    await server.register(itemsRoutes, { prefix: '/items' });
 
     server.get('/health', async () => {
       return { status: 'ok', timestamp: new Date().toISOString() };

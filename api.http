@@ -3,6 +3,9 @@
 ### Health check
 GET {{baseUrl}}/health
 
+### Get cheapest Skinport items (2 items: cheapest tradable + cheapest non-tradable)
+GET {{baseUrl}}/items
+
 ### Successful purchase - Buy 1 Wireless Mouse (19.99)
 POST {{baseUrl}}/purchases
 Content-Type: application/json
@@ -31,43 +34,4 @@ Content-Type: application/json
   "user_id": 1,
   "product_id": 3,
   "quantity": 5
-}
-
-### Error: Validation - negative quantity
-POST {{baseUrl}}/purchases
-Content-Type: application/json
-
-{
-  "user_id": 1,
-  "product_id": 1,
-  "quantity": -1
-}
-
-### Error: Validation - missing field
-POST {{baseUrl}}/purchases
-Content-Type: application/json
-
-{
-  "user_id": 1,
-  "product_id": 1
-}
-
-### Error: User not found
-POST {{baseUrl}}/purchases
-Content-Type: application/json
-
-{
-  "user_id": 9999,
-  "product_id": 1,
-  "quantity": 1
-}
-
-### Error: Product not found
-POST {{baseUrl}}/purchases
-Content-Type: application/json
-
-{
-  "user_id": 1,
-  "product_id": 9999,
-  "quantity": 1
 }
