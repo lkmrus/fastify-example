@@ -1,0 +1,42 @@
+{
+  "name": "fastify-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "npm run prebuild && tsc -p tsconfig.build.json",
+    "prestart": "npm run build",
+    "start:dev": "nodemon src/main.ts",
+    "start": "node dist/main.js",
+    "migrate": ""
+  },
+  "author": "lkmrus@gmail.com",
+  "license": "MIT",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@typescript-eslint/eslint-plugin": "^8.48.0",
+    "@typescript-eslint/parser": "^8.48.0",
+    "dotenv": "^17.2.3",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-prettier": "^5.5.4",
+    "nodemon": "^3.1.11",
+    "prettier": "^3.7.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "decimal.js": "^10.6.0",
+    "fastify": "^5.6.2",
+    "i": "^0.3.7",
+    "ioredis": "^5.8.2",
+    "npm": "^11.6.4",
+    "pg": "^8.16.3",
+    "reflect-metadata": "^0.2.2",
+    "rimraf": "^6.1.2"
+  }
+}
