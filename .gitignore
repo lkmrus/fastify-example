@@ -10,8 +10,6 @@
 *.launch
 .vscode/*
 
-# Environment
 .env
 
-# Database
 db/.seeded
