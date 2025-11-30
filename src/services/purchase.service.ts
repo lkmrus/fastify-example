@@ -1,11 +1,16 @@
 import postgres from 'postgres';
-import { User, CreatePurchaseResponse } from '../types';
-import { ProductService } from './product.service';
+import { CreatePurchaseResponse } from '../types';
+import { ProductRepository } from '../repositories/product.repository';
+import { UserRepository } from '../repositories/user.repository';
+import { PurchaseRepository } from '../repositories/purchase.repository';
+import { NotFoundError, InsufficientStockError, InsufficientFundsError } from '../errors';
 
 export class PurchaseService {
   constructor(
     private db: postgres.Sql,
-    private productService: ProductService,
+    private userRepo: UserRepository,
+    private productRepo: ProductRepository,
+    private purchaseRepo: PurchaseRepository,
   ) {}
 
   async createPurchase(
@@ -14,71 +19,50 @@ export class PurchaseService {
     quantity: number,
   ): Promise<CreatePurchaseResponse> {
     return await this.db.begin(async (transaction) => {
-      // 1. Получить товар с блокировкой
-      const product = await this.productService.getProductWithLock(productId, transaction);
+      const product = await this.productRepo.findByIdWithLock(productId, transaction);
 
       if (!product) {
-        throw new Error('PRODUCT_NOT_FOUND');
+        throw new NotFoundError('Product');
       }
 
-      // 2. Проверить наличие на складе
       if (product.stock < quantity) {
-        throw new Error('INSUFFICIENT_STOCK');
+        throw new InsufficientStockError();
       }
 
-      // 3. Получить пользователя с блокировкой
-      const [user] = await transaction<User[]>`
-        SELECT * FROM users WHERE id = ${userId} FOR UPDATE
-      `;
+      const user = await this.userRepo.findByIdWithLock(userId, transaction);
 
       if (!user) {
-        throw new Error('USER_NOT_FOUND');
+        throw new NotFoundError('User');
       }
 
-      // 4. Вычислить стоимость
       const pricePerUnit = parseFloat(product.price);
       const totalAmount = pricePerUnit * quantity;
 
-      // 5. Проверить баланс
       const userBalance = parseFloat(user.balance);
       if (userBalance < totalAmount) {
-        throw new Error('INSUFFICIENT_FUNDS');
+        throw new InsufficientFundsError();
       }
 
-      // 6. Обновить stock товара
       const newStock = product.stock - quantity;
-      await this.productService.updateStock(productId, newStock, transaction);
+      await this.productRepo.updateStock(productId, newStock, transaction);
 
-      // 7. Списать с баланса пользователя
       const newBalance = userBalance - totalAmount;
-      await transaction`
-        UPDATE users
-        SET balance = ${newBalance.toFixed(2)}
-        WHERE id = ${userId}
-      `;
+      await this.userRepo.updateBalance(userId, newBalance, transaction);
 
-      // 8. Создать запись о покупке
-      const [purchase] = await transaction<{ id: number }[]>`
-        INSERT INTO purchases (
-          user_id,
-          product_id,
+      const purchaseId = await this.purchaseRepo.create(
+        {
+          user_id: userId,
+          product_id: productId,
           quantity,
-          price_at_purchase,
-          total_amount
-        ) VALUES (
-          ${userId},
-          ${productId},
-          ${quantity},
-          ${pricePerUnit.toFixed(2)},
-          ${totalAmount.toFixed(2)}
-        )
-        RETURNING id
-      `;
+          price_at_purchase: pricePerUnit,
+          total_amount: totalAmount,
+        },
+        transaction,
+      );
 
-      // 9. Вернуть результат
       return {
         success: true,
-        purchase_id: purchase.id,
+        purchase_id: purchaseId,
         new_balance: newBalance.toFixed(2),
         product_name: product.name,
         total_paid: totalAmount.toFixed(2),

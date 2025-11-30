@@ -36,7 +36,7 @@ services:
     restart: unless-stopped
     ports:
       - '3050:3050'
-    env_file: .env
+    env_file: .env.docker
     volumes:
       - ./db:/app/db
     depends_on:

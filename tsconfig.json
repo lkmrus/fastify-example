@@ -13,7 +13,12 @@
     "incremental": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "strict": true
+    "strict": true,
+    "paths": {
+      "@/*": ["src/*"],
+      "@plugins/*": ["plugins/*"],
+      "@scripts/*": ["scripts/*"]
+    }
   },
   "include": ["src/**/*", "plugins/**/*", "scripts/**/*"]
 }

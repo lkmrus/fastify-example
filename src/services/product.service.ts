@@ -1,21 +1,14 @@
 import postgres from 'postgres';
-import { Product } from '../types';
+import { ProductRepository } from '../repositories/product.repository';
 
 export class ProductService {
-  constructor(private db: postgres.Sql) {}
+  constructor(private productRepo: ProductRepository) {}
 
-  async getProductWithLock(productId: number, transaction: postgres.Sql): Promise<Product | null> {
-    const [product] = await transaction<Product[]>`
-      SELECT * FROM products WHERE id = ${productId} FOR UPDATE
-    `;
-    return product || null;
+  async getProductWithLock(productId: number, transaction: postgres.Sql) {
+    return this.productRepo.findByIdWithLock(productId, transaction);
   }
 
-  async updateStock(productId: number, newStock: number, transaction: postgres.Sql): Promise<void> {
-    await transaction`
-      UPDATE products
-      SET stock = ${newStock}
-      WHERE id = ${productId}
-    `;
+  async updateStock(productId: number, newStock: number, transaction: postgres.Sql) {
+    return this.productRepo.updateStock(productId, newStock, transaction);
   }
 }

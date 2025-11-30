@@ -1,12 +1,19 @@
 import fp from 'fastify-plugin';
 import { FastifyPluginAsync } from 'fastify';
-import { ProductService } from '../src/services/product.service';
-import { PurchaseService } from '../src/services/purchase.service';
-import { SkinportService } from '../src/services/skinport.service';
+import { ProductService } from '@/services/product.service';
+import { PurchaseService } from '@/services/purchase.service';
+import { SkinportService } from '@/services/skinport.service';
+import { UserRepository } from '@/repositories/user.repository';
+import { ProductRepository } from '@/repositories/product.repository';
+import { PurchaseRepository } from '@/repositories/purchase.repository';
 
 const servicesPlugin: FastifyPluginAsync = async (fastify) => {
-  const productService = new ProductService(fastify.db);
-  const purchaseService = new PurchaseService(fastify.db, productService);
+  const userRepo = new UserRepository(fastify.db);
+  const productRepo = new ProductRepository(fastify.db);
+  const purchaseRepo = new PurchaseRepository(fastify.db);
+
+  const productService = new ProductService(productRepo);
+  const purchaseService = new PurchaseService(fastify.db, userRepo, productRepo, purchaseRepo);
   const skinportService = new SkinportService(fastify.skinportClient, fastify.cache);
 
   fastify.decorate('services', {

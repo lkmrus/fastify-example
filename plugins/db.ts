@@ -1,7 +1,7 @@
 import postgres from 'postgres';
 import fp from 'fastify-plugin';
 import { FastifyPluginAsync } from 'fastify';
-import { getConfig } from '../src/config';
+import { getConfig } from '@/config';
 
 const config = getConfig();
 

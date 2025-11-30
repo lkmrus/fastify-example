@@ -1,5 +1,5 @@
 import { migrate } from 'postgres-migrations';
-import { getConfig } from '../src/config';
+import { getConfig } from '@/config';
 import path from 'path';
 import postgres from 'postgres';
 

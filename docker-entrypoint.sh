@@ -21,4 +21,4 @@ else
 fi
 
 echo "Starting Fastify app"
-exec node dist/main.js
+exec node dist/src/main.js

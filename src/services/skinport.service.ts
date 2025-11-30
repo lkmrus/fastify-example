@@ -1,5 +1,5 @@
-import { SkinportClient, SkinportItem } from '../../plugins/skinport-client';
-import Cache from '../../plugins/cache';
+import { SkinportClient, SkinportItem } from '@plugins/skinport-client';
+import Cache from '@plugins/cache';
 import { MergedItem } from '../schemas/skinport.schema';
 
 export class SkinportService {
@@ -19,23 +19,29 @@ export class SkinportService {
 
     const { tradable, nontradable } = await this.skinportClient.getAllItems();
 
-    const cheapestTradable = tradable.reduce((cheapest: SkinportItem | null, item: SkinportItem) => {
-      if (item.quantity > 0 && item.min_price !== null) {
-        if (!cheapest || item.min_price < cheapest.min_price!) {
-          return item;
+    const cheapestTradable = tradable.reduce(
+      (cheapest: SkinportItem | null, item: SkinportItem) => {
+        if (item.quantity > 0 && item.min_price !== null) {
+          if (!cheapest || item.min_price < cheapest.min_price!) {
+            return item;
+          }
         }
-      }
-      return cheapest;
-    }, null as SkinportItem | null);
+        return cheapest;
+      },
+      null as SkinportItem | null,
+    );
 
-    const cheapestNontradable = nontradable.reduce((cheapest: SkinportItem | null, item: SkinportItem) => {
-      if (item.quantity > 0 && item.min_price !== null) {
-        if (!cheapest || item.min_price < cheapest.min_price!) {
-          return item;
+    const cheapestNontradable = nontradable.reduce(
+      (cheapest: SkinportItem | null, item: SkinportItem) => {
+        if (item.quantity > 0 && item.min_price !== null) {
+          if (!cheapest || item.min_price < cheapest.min_price!) {
+            return item;
+          }
         }
-      }
-      return cheapest;
-    }, null as SkinportItem | null);
+        return cheapest;
+      },
+      null as SkinportItem | null,
+    );
 
     const result: MergedItem[] = [];
 
@@ -75,5 +81,4 @@ export class SkinportService {
 
     return result;
   }
-
 }

@@ -5,15 +5,15 @@
   "main": "index.js",
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "npm run prebuild && tsc -p tsconfig.build.json",
+    "build": "npm run prebuild && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
     "prestart": "npm run build",
     "start:dev": "nodemon src/main.ts",
-    "start": "node dist/main.js",
-    "db:create": "ts-node scripts/create-database.ts",
-    "migrate": "ts-node scripts/migrate.ts",
-    "seed": "ts-node scripts/seed.ts",
-    "migrate:reset": "ts-node scripts/reset-migrations.ts",
-    "db:drop": "ts-node scripts/drop-db.ts",
+    "start": "node dist/src/main.js",
+    "db:create": "ts-node -r tsconfig-paths/register scripts/create-database.ts",
+    "migrate": "ts-node -r tsconfig-paths/register scripts/migrate.ts",
+    "seed": "ts-node -r tsconfig-paths/register scripts/seed.ts",
+    "migrate:reset": "ts-node -r tsconfig-paths/register scripts/reset-migrations.ts",
+    "db:drop": "ts-node -r tsconfig-paths/register scripts/drop-db.ts",
     "db:reset": "npm run db:drop && npm run migrate && npm run seed"
   },
   "author": "lkmrus@gmail.com",
@@ -32,6 +32,8 @@
     "pino-pretty": "^11.0.0",
     "prettier": "^3.7.3",
     "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.16",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3"
   },
   "dependencies": {

@@ -1,10 +1,13 @@
 import fastify from 'fastify';
 import { getConfig } from './config';
+import { ZodError } from 'zod';
+import { AxiosError } from 'axios';
+import { AppError } from './errors';
 
-import cachePlugin from '../plugins/cache-plugin';
-import dbPlugin from '../plugins/db';
-import skinportPlugin from '../plugins/skinport-plugin';
-import servicesPlugin from '../plugins/services';
+import cachePlugin from '@plugins/cache-plugin';
+import dbPlugin from '@plugins/db';
+import skinportPlugin from '@plugins/skinport-plugin';
+import servicesPlugin from '@plugins/services';
 
 import purchaseRoutes from './routes/purchase.routes';
 import itemsRoutes from './routes/items.routes';
@@ -24,16 +27,74 @@ const server = fastify({
   },
 });
 
-server.setErrorHandler((error, request, reply) => {
-  server.log.error({ err: error }, 'Request error');
+server.setErrorHandler((error: unknown, request, reply) => {
+  if (error instanceof AppError) {
+    server.log.warn({ err: error, code: error.code }, 'Application error');
+    return reply.status(error.statusCode).send({
+      error: error.code || error.name,
+      message: error.message,
+    });
+  }
 
-  const statusCode = (error as any).statusCode || 500;
-  const errorName = (error as Error).name || 'Internal Server Error';
-  const errorMessage = (error as Error).message || 'An unexpected error occurred';
+  if (error instanceof ZodError) {
+    server.log.warn({ err: error }, 'Validation error');
+    return reply.status(400).send({
+      error: 'VALIDATION_ERROR',
+      message: 'Invalid request data',
+      details: error.errors,
+    });
+  }
 
-  reply.status(statusCode).send({
-    error: errorName,
-    message: errorMessage,
+  if (typeof error === 'object' && error !== null) {
+    const err = error as Record<string, any>;
+
+    if ('code' in err && typeof err.code === 'string') {
+      server.log.error({ err: error, code: err.code }, 'Database error');
+
+      if (err.code === '23505') {
+        return reply.status(409).send({
+          error: 'CONFLICT',
+          message: 'Resource already exists',
+        });
+      }
+
+      if (err.code === '23503') {
+        return reply.status(400).send({
+          error: 'BAD_REQUEST',
+          message: 'Invalid reference to related resource',
+        });
+      }
+
+      return reply.status(500).send({
+        error: 'DATABASE_ERROR',
+        message: 'Database operation failed',
+      });
+    }
+  }
+
+  if (error instanceof AxiosError) {
+    server.log.error({ err: error, url: error.config?.url }, 'External API error');
+    return reply.status(503).send({
+      error: 'SERVICE_UNAVAILABLE',
+      message: 'External service is temporarily unavailable',
+    });
+  }
+
+  if (typeof error === 'object' && error !== null && 'statusCode' in error) {
+    const err = error as Record<string, any>;
+    if (typeof err.statusCode === 'number') {
+      server.log.warn({ err: error }, 'Fastify error');
+      return reply.status(err.statusCode).send({
+        error: err.name || 'Error',
+        message: err.message || 'Unknown error',
+      });
+    }
+  }
+
+  server.log.fatal({ err: error }, 'Unexpected error');
+  return reply.status(500).send({
+    error: 'INTERNAL_SERVER_ERROR',
+    message: 'An unexpected error occurred',
   });
 });
 

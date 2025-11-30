@@ -1,7 +1,7 @@
 import { execSync } from 'child_process';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
-import { getConfig } from '../src/config';
+import { getConfig } from '@/config';
 
 const config = getConfig();
 

@@ -1,5 +1,5 @@
 import postgres from 'postgres';
-import { getConfig } from '../src/config';
+import { getConfig } from '@/config';
 import fs from 'fs';
 import path from 'path';
 

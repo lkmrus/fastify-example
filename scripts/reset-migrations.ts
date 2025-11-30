@@ -1,5 +1,5 @@
 import postgres from 'postgres';
-import { getConfig } from '../src/config';
+import { getConfig } from '@/config';
 
 const config = getConfig();
 
