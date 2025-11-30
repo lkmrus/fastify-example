@@ -17,6 +17,9 @@ RUN npm ci
 # Copy source code
 COPY tsconfig.json tsconfig.build.json ./
 COPY src ./src
+COPY plugins ./plugins
+COPY scripts ./scripts
+COPY db ./db
 
 # Copy entrypoint script
 COPY docker-entrypoint.sh /app/

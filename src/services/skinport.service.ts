@@ -19,7 +19,7 @@ export class SkinportService {
 
     const { tradable, nontradable } = await this.skinportClient.getAllItems();
 
-    const cheapestTradable = tradable.reduce((cheapest, item) => {
+    const cheapestTradable = tradable.reduce((cheapest: SkinportItem | null, item: SkinportItem) => {
       if (item.quantity > 0 && item.min_price !== null) {
         if (!cheapest || item.min_price < cheapest.min_price!) {
           return item;
@@ -28,7 +28,7 @@ export class SkinportService {
       return cheapest;
     }, null as SkinportItem | null);
 
-    const cheapestNontradable = nontradable.reduce((cheapest, item) => {
+    const cheapestNontradable = nontradable.reduce((cheapest: SkinportItem | null, item: SkinportItem) => {
       if (item.quantity > 0 && item.min_price !== null) {
         if (!cheapest || item.min_price < cheapest.min_price!) {
           return item;
