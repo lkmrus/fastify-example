@@ -13,7 +13,13 @@ const servicesPlugin: FastifyPluginAsync = async (fastify) => {
   const purchaseRepo = new PurchaseRepository(fastify.db);
 
   const productService = new ProductService(productRepo);
-  const purchaseService = new PurchaseService(fastify.db, userRepo, productRepo, purchaseRepo);
+  const purchaseService = new PurchaseService(
+    fastify.db,
+    userRepo,
+    productRepo,
+    purchaseRepo,
+    fastify.cache,
+  );
   const skinportService = new SkinportService(fastify.skinportClient, fastify.cache);
 
   fastify.decorate('services', {

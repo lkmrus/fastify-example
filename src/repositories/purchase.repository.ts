@@ -4,8 +4,8 @@ export interface CreatePurchaseData {
   user_id: number;
   product_id: number;
   quantity: number;
-  price_at_purchase: number;
-  total_amount: number;
+  price_at_purchase: string;
+  total_amount: string;
 }
 
 export class PurchaseRepository {
@@ -23,8 +23,8 @@ export class PurchaseRepository {
         ${data.user_id},
         ${data.product_id},
         ${data.quantity},
-        ${data.price_at_purchase.toFixed(2)},
-        ${data.total_amount.toFixed(2)}
+        ${data.price_at_purchase},
+        ${data.total_amount}
       )
       RETURNING id
     `;

@@ -13,12 +13,12 @@ export class UserRepository {
 
   async updateBalance(
     userId: number,
-    newBalance: number,
+    newBalance: string,
     transaction: postgres.Sql,
   ): Promise<void> {
     await transaction`
       UPDATE users
-      SET balance = ${newBalance.toFixed(2)}
+      SET balance = ${newBalance}
       WHERE id = ${userId}
     `;
   }

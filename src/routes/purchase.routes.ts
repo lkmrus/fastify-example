@@ -6,7 +6,13 @@ const purchaseRoutes: FastifyPluginAsync = async (fastify) => {
     const validatedBody = createPurchaseBodySchema.parse(request.body);
     const { user_id, product_id, quantity } = validatedBody;
 
-    const result = await fastify.services.purchase.createPurchase(user_id, product_id, quantity);
+    const idempotencyKey = request.headers['idempotency-key'] as string | undefined;
+    const result = await fastify.services.purchase.createPurchase(
+      user_id,
+      product_id,
+      quantity,
+      idempotencyKey,
+    );
 
     return reply.status(201).send(result);
   });
